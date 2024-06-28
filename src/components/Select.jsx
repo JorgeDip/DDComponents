@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 
 export default function DDSelect (children) {
-  const { name } = children
-  const [selectedOption, setselectedOption] = useState('Select an option')
+  const { options, name, handleOption, selectedItem } = children
+
   const [isOpen, setisOpen] = useState(false)
   const inputRef = useRef()
 
@@ -22,24 +22,20 @@ export default function DDSelect (children) {
   const handleClick = () => {
     setisOpen(!isOpen)
   }
-  const handleOption = (event) => {
-    setselectedOption(event.target.value)
-  }
 
   return (
     <div>
       <div className='flex flex-col relative'>
-        <div ref={inputRef} onClick={handleClick} className='bg-gray-800 border border-gray-600 rounded w-56 p-1 text-center text-gray-400 cursor-pointer after:absolute after:right-4 after:top-3 after:w-2 after:h-2 after:border-white after:border-solid after:border-b-2 after:border-r-2 after:rounded-sm after:rotate-45'>
-          {selectedOption}
+        <div role='sele' ref={inputRef} onClick={handleClick} className='bg-gray-800 border border-gray-600 rounded w-56 p-1 text-center text-gray-400 cursor-pointer after:absolute after:right-4 after:top-3 after:w-2 after:h-2 after:border-white after:border-solid after:border-b-2 after:border-r-2 after:rounded-sm after:rotate-45'>
+          {selectedItem || 'Select an option'}
         </div>
-        <div className={`${!isOpen ? 'hidden' : 'absolute top-9'} w-full bg-gray-900 border border-gray-700 rounded`}>
-          {children.children.map((props, index) => (
-            <label key={index} htmlFor={props.props.name} className='flex justify-center p-2 text-center cursor-pointer hover:bg-gray-700'>
-              <input type='radio' className='hidden' name={name} onChange={handleOption} id={props.props.value} value={props.props.text} />
-              <div>
-                {props.props.text}
+        <div role='listbox' className={`${!isOpen ? 'hidden' : 'absolute top-9'} w-full bg-gray-900 border border-gray-700 rounded`} aria-expanded={isOpen}>
+          {options?.map((props, index) => (
+            <div key={index} className='text-center'>
+              <div className='p-2 w-full text-center cursor-pointer hover:bg-gray-700' role='option' name={name} onClick={handleOption} data-value={props.text} aria-selected={selectedItem === props.text}>
+                {props.text}
               </div>
-            </label>
+            </div>
           ))}
         </div>
       </div>
